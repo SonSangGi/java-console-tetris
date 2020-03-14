@@ -5,4 +5,5 @@ package dev.sanggi.tetris.type;
  * @created 2020/03/14
  */
 public enum MoveType {
+    LEFT(), RIGHT, DOWN
 }

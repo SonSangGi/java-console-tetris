@@ -21,9 +21,9 @@ public enum ColorType {
         this.value = value;
     }
 
-    private static final ColorType VALUES[] = values();
+    private final ColorType VALUES[] = values();
 
-    public static ColorType getRandomColor() {
+    public ColorType getRandomColor() {
         return VALUES[new Random().nextInt(VALUES.length)];
     }
 }

@@ -1,5 +1,8 @@
 package dev.sanggi.tetris;
 
+import dev.sanggi.tetris.controller.TetrisController;
+import dev.sanggi.tetris.screen.ScreenPrinter;
+
 import java.io.Reader;
 
 /**
@@ -19,35 +22,53 @@ public class Main {
         String[] cmd = {"/bin/sh", "-c", "stty raw -echo </dev/tty"};
         Runtime.getRuntime().exec(cmd).waitFor();
 
+        TetrisController tetrisController = new TetrisController(new ScreenPrinter());
         Reader reader = System.console().reader();
 
-        int key;
+        Object lock = new Object();
+
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                }
+                synchronized (lock) {
+                    tetrisController.down();
+                    tetrisController.flush();
+                }
+            }
+        }).start();
+
+        char key[] = {0, 0, 0};
         while (true) {
 
-            key = Character.toLowerCase((char) reader.read());
-            System.out.print(key);
+            if (key[2] == 27 && key[1] == '[') {
+                key[0] = (char)reader.read();
+            } else {
+                key[0] = Character.toLowerCase((char)reader.read());
+            }
 
-            synchronized (new Object()) {
-                switch (key) {
-                    case 3:
-                    case 'p':
-                        quit();
+            synchronized (lock) {
+                switch (key[0]) {
+                    case 'q':
+                        tetrisController.exit();
+                        break;
+                    case 'a':
+                        tetrisController.left();
+                        break;
+                    case 'd':
+                        tetrisController.right();
+                        break;
+                    case 's':
+                        tetrisController.down();
                         break;
                     default:
                         break;
                 }
+                tetrisController.flush();
             }
         }
 
-    }
-
-    static void quit() {
-        try {
-            String[] cmd = new String[]{"/bin/sh", "-c", "stty sane </dev/tty"};
-            Runtime.getRuntime().exec(cmd).waitFor();
-            System.exit(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
