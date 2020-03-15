@@ -21,49 +21,61 @@ public class Main {
         // /bin/sh 실행 및 터미널 설정 변경 (입력내용 미표시)
         String[] cmd = {"/bin/sh", "-c", "stty raw -echo </dev/tty"};
         Runtime.getRuntime().exec(cmd).waitFor();
-
-        TetrisController tetrisController = new TetrisController(new ScreenPrinter());
+        ScreenPrinter screenPrinter = new ScreenPrinter();
+        TetrisController tetrisController = new TetrisController(screenPrinter);
         Reader reader = System.console().reader();
 
         Object lock = new Object();
 
         new Thread(() -> {
+            final int KB = 1024;
             while (true) {
+                synchronized (lock) {
+                    screenPrinter.print(0, 4, "Used memory: " + ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / KB) + "/kb");
+                    tetrisController.down();
+                    tetrisController.flush();
+                }
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                 }
-                synchronized (lock) {
-                    tetrisController.down();
-                    tetrisController.flush();
-                }
             }
         }).start();
 
-        char key[] = {0, 0, 0};
+        char key;
+
         while (true) {
 
-            if (key[2] == 27 && key[1] == '[') {
-                key[0] = (char)reader.read();
-            } else {
-                key[0] = Character.toLowerCase((char)reader.read());
-            }
+            key = (char) reader.read();
+
+            screenPrinter.print(55, 2, String.valueOf(key));
 
             synchronized (lock) {
-                switch (key[0]) {
+                switch (key) {
                     case 'q':
                         tetrisController.exit();
                         break;
                     case 'a':
+                    case 'D':
                         tetrisController.left();
                         break;
                     case 'd':
+                    case 'C':
                         tetrisController.right();
                         break;
                     case 's':
+                    case 'B':
                         tetrisController.down();
                         break;
+                    case 'w':
+                    case 'A':
+                        tetrisController.rotate();
+                        break;
+                    case ' ':
+                        tetrisController.drop();
+                        break;
                     default:
+                        screenPrinter.print(55, 4, String.valueOf(key));
                         break;
                 }
                 tetrisController.flush();

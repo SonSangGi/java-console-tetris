@@ -8,7 +8,7 @@ public abstract class ScreenItem {
     protected ScreenPrinter printer;
     protected ScreenConfig config;
 
-    private boolean visible = true;
+    public boolean visible = true;
 
     public ScreenItem(ScreenPrinter printer, final ScreenConfig config) {
         this.printer = printer;
