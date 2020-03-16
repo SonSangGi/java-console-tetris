@@ -1,5 +1,7 @@
 package dev.sanggi.tetris.screen;
 
+import dev.sanggi.tetris.type.ColorType;
+
 /**
  * @@author sanggi-son
  * @created 2020/03/14
@@ -21,6 +23,18 @@ public class ScreenPrinter {
 
     public void hideCursor() {
         sb.append("\u001B[?25l");
+    }
+
+    public void setFg(ColorType c) {
+            sb.append("\u001B[3" + c.value + "m");
+    }
+
+    public void setBg(ColorType c) {
+            sb.append("\u001B[4" + c.value + "m");
+    }
+
+    public void resetColor() {
+        sb.append("\u001B[0m");
     }
 
     public void clear() {

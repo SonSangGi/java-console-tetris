@@ -29,6 +29,8 @@ public class Main {
 
         new Thread(() -> {
             final int KB = 1024;
+            int delay = 1000;
+
             while (true) {
                 synchronized (lock) {
                     screenPrinter.print(0, 4, "Used memory: " + ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / KB) + "/kb");
@@ -36,7 +38,7 @@ public class Main {
                     tetrisController.flush();
                 }
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(delay -= 2);
                 } catch (InterruptedException e) {
                 }
             }

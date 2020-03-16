@@ -4,20 +4,13 @@ import dev.sanggi.tetris.screen.item.Piece;
 import dev.sanggi.tetris.screen.ScreenConfig;
 import dev.sanggi.tetris.screen.ScreenPrinter;
 import dev.sanggi.tetris.screen.item.PlayField;
+import dev.sanggi.tetris.screen.item.Score;
 
 /**
  * @@author sanggi-son
  * @created 2020/03/14
  */
 public class TetrisController {
-    private ScreenPrinter printer;
-
-    private PlayField playField;
-
-
-    private Piece currentPiece;
-    private Piece nextPiece;
-    private Piece holdPiece;
 
     private final int PLAY_FILED_WIDTH = 10;
     private final int PLAY_FILED_HEIGHT = 20;
@@ -29,9 +22,24 @@ public class TetrisController {
     private final int NEXT_BLOCK_Y = 11;
     private final ScreenConfig NEXT_BLOCK_CONFIG = new ScreenConfig(PLAY_FILED_WIDTH, PLAY_FILED_HEIGHT, NEXT_BLOCK_X, NEXT_BLOCK_Y);
 
+    private final int SCORE_X = 54;
+    private final int SCORE_Y = 11;
+    private final ScreenConfig SCORE_CONFIG = new ScreenConfig(0, 0, SCORE_X, SCORE_Y);
+
+    private ScreenPrinter printer;
+
+    private PlayField playField;
+
+    private Piece currentPiece;
+    private Piece nextPiece;
+    private Piece holdPiece;
+
+    private Score score;
+
     public TetrisController(ScreenPrinter printer) {
         this.printer = printer;
         this.playField = new PlayField(printer, PLAY_FILED_CONFIG);
+        this.score = new Score(printer, SCORE_CONFIG);
         createNextPiece();
         createCurrentPiece();
         redraw();
@@ -39,14 +47,14 @@ public class TetrisController {
     }
 
     public void createCurrentPiece() {
+
         nextPiece.hide();
 
         currentPiece = nextPiece;
         currentPiece.setPosition(new int[]{(PLAY_FILED_WIDTH - 4) / 2, 0, -1});
         currentPiece.setConfig(PLAY_FILED_CONFIG);
 
-        if (!playField.positionOk(currentPiece, null))
-            exit();
+        if (!playField.positionOk(currentPiece, null)) exit();
 
         currentPiece.show();
         createNextPiece();
@@ -58,7 +66,7 @@ public class TetrisController {
     }
 
     public void hold() {
-        if(holdPiece != null) {
+        if (holdPiece != null) {
             holdPiece = currentPiece;
             holdPiece.show();
         }
@@ -102,7 +110,10 @@ public class TetrisController {
         playField.pileUpPieces(currentPiece);
         int clearLine = playField.lineClear();
         printer.print(0, 10, clearLine + "");
-        if (clearLine > 0) playField.show();
+        if (clearLine > 0) {
+            score.update(clearLine);
+            playField.show();
+        }
         return false;
     }
 
@@ -116,6 +127,7 @@ public class TetrisController {
         playField.show();
         nextPiece.show();
         currentPiece.show();
+        score.show();
     }
 
     public void exit() {

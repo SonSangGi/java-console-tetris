@@ -3,6 +3,7 @@ package dev.sanggi.tetris.screen.item;
 import dev.sanggi.tetris.screen.ScreenConfig;
 import dev.sanggi.tetris.screen.ScreenItem;
 import dev.sanggi.tetris.screen.ScreenPrinter;
+import dev.sanggi.tetris.type.ColorType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  */
 public class PlayField extends ScreenItem {
 
-    private List<List<Integer>> grid;
+    private List<List<ColorType>> grid;
 
     public PlayField(ScreenPrinter screenPrinter, ScreenConfig screenConfig) {
         super(screenPrinter, screenConfig);
@@ -30,27 +31,32 @@ public class PlayField extends ScreenItem {
         for (int y = 0; y < grid.size(); y++) {
             printer.print(config.X, config.Y + y, "");
 
-            for (int row : grid.get(y)) {
-                if (row == 0) printer.print(" .");
-                else printer.print("[]");
+            for (ColorType cell : grid.get(y)) {
+                if (cell == null) printer.print(" .");
+                else {
+                    printer.setFg(cell);
+                    printer.setBg(cell);
+                    printer.print("[]");
+                    printer.resetColor();
+                }
             }
         }
     }
 
-    public List<Integer> createEmptyRow() {
+    public List<ColorType> createEmptyRow() {
 
-        List<Integer> row = new ArrayList<>();
-        for (int j = 0; j < config.WIDTH; j++) row.add(0);
+        List<ColorType> row = new ArrayList<>();
+        for (int j = 0; j < config.WIDTH; j++) row.add(null);
         return row;
     }
 
     // 행 삭제
     public int lineClear() {
 
-        List<List<Integer>> newGrid = new ArrayList<>();
+        List<List<ColorType>> newGrid = new ArrayList<>();
 
-        for (List<Integer> row : grid) {
-            if (row.indexOf(0) != -1) newGrid.add(row);
+        for (List<ColorType> row : grid) {
+            if (row.indexOf(null) != -1) newGrid.add(row);
         }
 
         int clearLines = config.HEIGHT - newGrid.size();
@@ -68,7 +74,7 @@ public class PlayField extends ScreenItem {
             int x = cell[0];
             int y = cell[1];
 
-            grid.get(y).set(x, 1);
+            grid.get(y).set(x, piece.color);
         }
     }
 
@@ -79,7 +85,7 @@ public class PlayField extends ScreenItem {
             int y = cell[1];
             printer.print(0, 2, "x: " + x + " y: " + y);
             printer.flush();
-            if (x < 0 || x >= config.WIDTH || y < 0 || y >= config.HEIGHT || grid.get(y).get(x) != 0) {
+            if (x < 0 || x >= config.WIDTH || y < 0 || y >= config.HEIGHT || grid.get(y).get(x) != null) {
                 return false;
             }
         }

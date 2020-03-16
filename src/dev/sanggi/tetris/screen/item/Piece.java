@@ -3,6 +3,7 @@ package dev.sanggi.tetris.screen.item;
 import dev.sanggi.tetris.screen.ScreenConfig;
 import dev.sanggi.tetris.screen.ScreenItem;
 import dev.sanggi.tetris.screen.ScreenPrinter;
+import dev.sanggi.tetris.type.ColorType;
 
 import java.util.Random;
 
@@ -11,24 +12,33 @@ import java.util.Random;
  * @created 2020/03/15
  */
 public class Piece extends ScreenItem {
+
+    public ColorType color = null;
+
     private int[] data;
     private int[] position;
     private Random random = new Random();
 
     public Piece(ScreenPrinter printer, ScreenConfig config) {
         super(printer, config);
+        color = ColorType.getRandomColor();
         data = pieceData[random.nextInt(pieceData.length)];
         position = new int[]{0, 0, random.nextInt(data.length)};
     }
 
     @Override
     public void draw(boolean visible) {
+        if(visible) {
+            printer.setFg(color);
+            printer.setBg(color);
+        }
         for (int[] cell : getCells(null)) {
             int x = cell[0];
             int y = cell[1];
 
-            printer.print(config.X + x * 2, config.Y + y, visible ? "[]" : " .");
+            printer.print(config.X + x * 2, config.Y + y, visible ? "  " : " .");
         }
+        printer.resetColor();
     }
 
     private static int[][] pieceData = {

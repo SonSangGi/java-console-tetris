@@ -11,7 +11,7 @@ public enum ColorType {
     GREEN(2),
     YELLOW(3),
     BLUE(4),
-    FUCHSIA(5),
+    PURPLE(5),
     CYAN(6),
     WHITE(7);
 
@@ -21,9 +21,9 @@ public enum ColorType {
         this.value = value;
     }
 
-    private final ColorType VALUES[] = values();
+    private static final ColorType VALUES[] = values();
 
-    public ColorType getRandomColor() {
+    public static ColorType getRandomColor() {
         return VALUES[new Random().nextInt(VALUES.length)];
     }
 }
