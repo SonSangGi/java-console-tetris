@@ -20,7 +20,11 @@ public class TetrisController {
 
     private final int NEXT_BLOCK_X = 14;
     private final int NEXT_BLOCK_Y = 11;
-    private final ScreenConfig NEXT_BLOCK_CONFIG = new ScreenConfig(PLAY_FILED_WIDTH, PLAY_FILED_HEIGHT, NEXT_BLOCK_X, NEXT_BLOCK_Y);
+    private final ScreenConfig NEXT_BLOCK_CONFIG = new ScreenConfig(0, 0, NEXT_BLOCK_X, NEXT_BLOCK_Y);
+
+    private final int HOLD_BLOCK_X = 40;
+    private final int HOLD_BLOCK_Y = 11;
+    private final ScreenConfig HOLD_BLOCK_CONFIG = new ScreenConfig(0, 0, HOLD_BLOCK_X, HOLD_BLOCK_Y);
 
     private final int SCORE_X = 54;
     private final int SCORE_Y = 11;
@@ -40,6 +44,8 @@ public class TetrisController {
         this.printer = printer;
         this.playField = new PlayField(printer, PLAY_FILED_CONFIG);
         this.score = new Score(printer, SCORE_CONFIG);
+        holdPiece = new Piece(printer, HOLD_BLOCK_CONFIG);
+        holdPiece.visible = false;
         createNextPiece();
         createCurrentPiece();
         redraw();
@@ -66,10 +72,11 @@ public class TetrisController {
     }
 
     public void hold() {
-        if (holdPiece != null) {
-            holdPiece = currentPiece;
-            holdPiece.show();
-        }
+        holdPiece.setData(currentPiece.getData());
+        currentPiece.setData(holdPiece.getData());
+        createCurrentPiece();
+        holdPiece.show();
+        playField.show();
     }
 
     public void rotate() {

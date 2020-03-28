@@ -76,6 +76,9 @@ public class Main {
                     case ' ':
                         tetrisController.drop();
                         break;
+                    case 'h':
+                        tetrisController.hold();
+                        break;
                     default:
                         screenPrinter.print(55, 4, String.valueOf(key));
                         break;

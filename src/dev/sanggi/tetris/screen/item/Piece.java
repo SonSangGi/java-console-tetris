@@ -13,7 +13,7 @@ import java.util.Random;
  */
 public class Piece extends ScreenItem {
 
-    public ColorType color = null;
+    public ColorType color;
 
     private int[] data;
     private int[] position;
@@ -78,6 +78,14 @@ public class Piece extends ScreenItem {
         int y = position[1];
         int z = position[2];
         return new int[]{x + dx, y + dy, (z + dz) % data.length};
+    }
+
+    public int[] getData() {
+        return data;
+    }
+
+    public void setData(int[] data) {
+        this.data = data;
     }
 
     public void setConfig(ScreenConfig config) {
